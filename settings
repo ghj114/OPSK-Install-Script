@@ -1,0 +1,132 @@
+#####################################################################
+# You can create a  settings.local file and override these settings #
+# from there, allowing you to `git pull` without conflicts!         #
+#####################################################################
+
+
+# hardWare
+#      name           nic                                   descri
+#     node1          eth0:10.1.247.62                   controller node
+#                    eth1:172.16.247.62
+#     node2          eth0:10.1.247.58(Not required)     compute node
+#                    eth1:172.16.247.58
+#     node3          eth0:10.1.247.60(Not required)     compute node
+#                    eth1:172.16.247.60
+
+
+#  network_type       device                                           network                         describe
+#----------------------------------------------------------------------------------------------------------------------------------
+#     vlan             eth0(public/external network)          network1:10.1.247.62/24
+#
+#                      eth1(private/internal networks)        network2:172.16.247.62/24       The OpenStack management network:is used for the communication \
+#                                                                                                 between the OpenStack components,the MySQL DB server,
+#                                                                                                 and the RabbitMQ messaging server.
+#                                                                                             The storage network (volume network): is used for the iSCSI \
+#                                                                                                 volume traffic between the storage node (volume node) 
+#                      eth1                                   network3:10.0.0.0/8             The service network: is used for the instance fixed IPs and to \
+#                                                                                                 create all the VLANs/subnets for the tenants.It is completely\#                                                                                                 managed by OpenStack.
+#  flatdhcp            eth0                                   network1:10.1.247.62/24
+#                      eth1                                   network2:172.16.147.62/24
+#                      eth1                                   network3:192.168.147.0/24
+#
+#
+
+# MYPUB_IP="10.1.247.62"
+MYPRI_IP="10.1.247.62"
+
+# Controller Node
+CONTROLLER_IP="10.1.247.62"       # management networks on eth1
+CONTROLLER_IP_PUB="10.1.247.62"
+
+# Networking and IPs
+#NETWORK_TYPE="FLATDHCP"                #value is 'FLATDHCP' or 'VLAN'
+NETWORK_TYPE="VLAN"                #value is 'FLATDHCP' or 'VLAN'
+
+MULTI_HOST="True"                   #multi network install; 'True'/'False'
+#MULTI_HOST="False"                   #multi network install; 'True'/'False'
+
+FIXED_RANGE_NETWORK_SIZE="256"
+FIXED_RANGE_NETWORK_COUNT="1"
+BRIDGE_INTERFACE="eth1"
+
+VLAN_ARRAYS=(10.0.101.0/24 10.0.102.0/24
+            10.0.103.0/24 10.0.104.0/24
+            10.0.105.0/24)            
+VLANID_ARRAYS=(101 102 103 104 105) # VLAN ID is 101,102,103,104,105
+
+
+FIXED_RANGE_NET="192.168.247.0"  
+FIXED_RANGE_BITS="24"
+FIXED_RANGE="${FIXED_RANGE_NET}/${FIXED_RANGE_BITS}"
+
+#PUBLIC_INTERFACE="eth0"   # Interface for Floating IP traffic
+#VLAN_INTERFACE="eth1"     # Interface for Fixed IP VLAN traffic
+#FLOATING_RANGE="172.16.10.0/24"
+
+#FIXED_RANGE_MASK="255.0.0.0"
+#COUNT=1
+
+#swift
+SWIFT_USED='False'  # 'True'/'False'
+#SWIFT_USED='True'  # 'True'/'False'
+SWIFT_IP=$CONTROLLER_IP
+
+# MySQL Server Settings
+#  HOST-IP           USER            PASSWORD
+#--------------------------------------------
+#                    root             root
+#                    nova             centrinN
+#                    glance           centrinG
+#                    keystone         centrinK
+#                    horizon          centrinH
+MYSQL_HOST=$CONTROLLER_IP
+MYSQL_ROOT_PASS="root"
+MYSQL_NOVA_PASS="centrinN"
+MYSQL_GLANCE_PASS="centrinG"
+MYSQL_KEYSTONE_PASS="centrinK"
+MYSQL_HORIZON_PASS="centrinH"
+
+# keystone
+KEYSTONE_IP=$CONTROLLER_IP
+SERVICE_TOKEN="CentRin"
+SERVICE_ENDPOINT="http://$KEYSTONE_IP:35357/v2.0/"
+ 
+SERVICE_TENANT_NAME="service"
+
+# keystone user password
+ADMIN_PASSWORD="admin"
+SERVICE_PASSWORD="admin"
+
+# Computer Node
+COMPUTE_IP=$MYPRI_IP
+
+# glance
+GLANCE_IP=$CONTROLLER_IP
+#GLANCE_TENENT=$SERVICE_TENENT
+#GLANCE_USER="glance"
+#GLANCE_PASSWOED=$SERVICE_PASSWORD
+#GLANCE_AUTH_URL="http://$KEYSTONE_IP:5000/v2.0/"
+
+# rabbitmq
+RABBITMQ_IP=$CONTROLLER_IP
+
+# dashboard
+DASHBOARD_IP=$CONTROLLER_IP
+
+# Misc
+#REGION="nova"             # Region name - "nova" is the default, and probably the most reliable withoit extra setup!
+
+# Load overrides from settings.local if it exists
+if [ -f settings.local ]
+then
+  . settings.local
+fi
+
+# Dont change anything below here!
+#export NOVA_PROJECT_ID="admin" # Tenant
+#export NOVA_USERNAME="admin" # Username
+#export NOVA_API_KEY=$ADMIN_PASSWORD
+#export NOVA_URL="http://$HOST_IP:5000/v2.0/"
+#export NOVA_URL="http://$KEYSTONE_IP:5000/v2.0/"
+#export NOVA_VERSION=1.1
+#export NOVA_REGION_NAME=$REGION

@@ -1,0 +1,13 @@
+"Openstack  Esess installation script"
+
+when you install the Openstack:
+
+first set the file 'setting',config the ip,network type,multi-host,swift, and so on
+network type is include VLAN and flatdhcp
+
+
+then run the opensk_instl.sh with the options: --all is installation controller node and compute node
+                                               --controller is installation all except compute node
+                                               --compute/-p is installation only compute node
+
+
